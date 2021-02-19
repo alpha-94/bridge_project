@@ -28,7 +28,7 @@ def mouse_callback(event, x, y, flags, param):
 
 
 def custom_hsv(x, y):
-    color = frame[x, y]
+    color = frame[y, x]
     one_pixel = np.uint8([[color]])
     hsv = cv2.cvtColor(one_pixel, cv2.COLOR_BGR2HSV)
     hsv = hsv[0][0]
