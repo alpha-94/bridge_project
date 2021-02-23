@@ -1,0 +1,130 @@
+{% load static %}
+
+<!-- <!DOCTYPE html> -->
+<html lang="ko">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:100,300,400,500,700,900" rel="stylesheet">
+
+    <title>자산관리 웹 {% block title %}{% endblock %} </title>
+<!--
+SOFTY PINKO
+https://templatemo.com/tm-535-softy-pinko
+-->
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}"> <!-- assets/css/bootstrap.min.css -->
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.css' %}"> <!-- assets/css/font-awesome.css -->
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/templatemo-softy-pinko.css' %}"> <!-- assets/css/templatemo-softy-pinko.css -->
+
+         <!-- jQuery -->
+    <script src="{% static 'assets/js/jquery-2.1.0.min.js' %}"></script> <!-- assets/js/jquery-2.1.0.min.js -->
+
+    <!-- Bootstrap -->
+    <script src="{% static 'assets/js/popper.js' %}"></script> <!-- assets/js/popper.js -->
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script> <!-- assets/js/bootstrap.min.js -->
+
+    <!-- Plugins -->
+    <script src="{% static 'assets/js/scrollreveal.min.js' %}"></script> <!-- assets/js/scrollreveal.min.js -->
+    <script src="{% static 'assets/js/waypoints.min.js' %}"></script> <!-- assets/js/waypoints.min.js -->
+    <script src="{% static 'assets/js/jquery.counterup.min.js' %}"></script> <!-- assets/js/jquery.counterup.min.js -->
+    <script src="{% static 'assets/js/imgfix.min.js' %}"></script>  <!-- assets/js/imgfix.min.js -->
+
+    <!-- Global Init -->
+    <script src="{% static 'assets/js/custom.js' %}"></script> <!-- assets/js/custom.js -->
+
+
+    </head>
+    
+    <body>
+    
+    <!-- ***** Preloader Start ***** -->
+    <div id="preloader">
+        <div class="jumper">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>  
+    <!-- ***** Preloader End ***** -->
+    
+    
+    <!-- ***** Header Area Start ***** -->
+    <header class="header-area header-sticky" >
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <!-- ***** Logo Start ***** -->
+                        <a href="/" class="logo">
+                            <img src="{% static 'assets/images/logo.png' %}" width="135px" height="30px"/>
+                        </a>
+                        <!-- ***** Logo End ***** -->
+                        <!-- ***** Menu Start ***** -->
+                        <ul class="nav">
+                            <li><a href="/" class="nav-item active">Home</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-item dropdown-toggle" href="#" data-toggle="dropdown"> 자산관리 </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{% url 'item:item_upload' %}">자산등록</a>
+                                    <a class="dropdown-item" href="{% url 'item:item_list' %}">자산현황</a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-item dropdown-toggle" href="#" data-toggle="dropdown"> 사업관리 </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">사업등록</a>
+                                    <a class="dropdown-item" href="{% url 'entry:entry_list' %}">사업현황</a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-item dropdown-toggle" href="#" data-toggle="dropdown"> 사원관리 </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">사원등록</a>
+                                    <a class="dropdown-item" href="#">사원수정</a>
+                                    <a class="dropdown-item" href="#">사원삭제</a>
+                                </div>
+                            </li>
+                            <li><a href="#pricing-plans">로그인</a></li>
+                            <li><a href="#blog">로그아웃</a></li>
+                        </ul>
+                        <a class='menu-trigger'>
+                            <span>Menu</span>
+                        </a>
+                        <!-- ***** Menu End ***** -->
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- ***** Header Area End ***** -->
+
+
+    {% block content %}
+    {% endblock %}
+
+
+
+
+    <!-- ***** Footer Start ***** -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <p class="copyright">Copyright &copy; ARSLOOPER</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+
+
+  </body>
+</html>
