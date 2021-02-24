@@ -22,5 +22,6 @@ urlpatterns = [
     path('clean/', http1, name='clean'),
     path('rec/', http2, name='rec'),
     path('diff/', http3, name='diff'),
+    path('text/', http_text, name='text')
 
 ]

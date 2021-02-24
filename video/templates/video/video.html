@@ -8,8 +8,33 @@
 <form action="#" method="post" enctype="multipart/form-data">
 	{% csrf_token %}
 	<input type="image" name="img" src="{% url 'video:rec' %}">
-	<input type="image" name="img" src="{% url 'video:diff' %}">
-	<input type="image" name="img" src="{% url 'video:clean' %}">
+
 </form>
 
 {% endblock %}
+
+
+
+<!--
+	<input type="image" name="img" src="{% url 'video:rec' %}">
+	<input type="image" name="img" src="{% url 'video:diff' %}">
+	<input type="image" name="img" src="{% url 'video:clean' %}">
+-->
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+	var form = document.querySelector("form");
+	var log = document.querySelector("#log");
+
+	form.addEventListener("submit", function(event) {
+	  var data = new FormData(form);
+	  var output = "";
+	  for (const entry of data) {
+		output = output + entry[0] + "=" + entry[1] + "\r";
+	  };
+	  log.innerText = output;
+	  event.preventDefault();
+	}, false);
+        });
+</script>

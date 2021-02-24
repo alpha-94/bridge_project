@@ -21,7 +21,7 @@ def mouse_callback(event, x, y, flags, param):
 
     # 마우스 왼쪽 버튼 누를시 위치에 있는 픽셀값을 읽어와서 HSV로 변환합니다.
     if event == cv.EVENT_LBUTTONDOWN:
-        print(img_color[y, x])
+        print("spot", x, y)
         color = img_color[y, x]
 
         one_pixel = np.uint8([[color]])

@@ -10,7 +10,7 @@ class Clean_Video:
 
     def stream(self):
         img = self.cap.read()
-        img = cv2.resize(img, dsize=(576, 324), interpolation=cv2.INTER_AREA)
+        img = cv2.resize(img, dsize=(640, 480), interpolation=cv2.INTER_AREA)
 
         _, jpeg = cv2.imencode('.jpg', img)
         return jpeg.tobytes()
