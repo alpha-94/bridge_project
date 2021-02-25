@@ -11,9 +11,11 @@ class Rectangle_Recognition:
         self.cap = VideoStream('rtsp://10.0.0.97:554/main&media=video&media=audio').start()
         self.none_array = []
         self.else_array = []
-        self.test = []
+        self.text = ''
+        self.base_height = 0
 
-    def roi(self, name: str, img, width, height, spot: tuple, clr: str):
+    @staticmethod
+    def roi(name: str, img, width, height, spot: tuple, clr: str):
         color = {
             'red': (0, 0, 255),
             'green': (0, 255, 0),
@@ -24,12 +26,13 @@ class Rectangle_Recognition:
 
         pt1 = spot
         pt2 = (x + width, y + height)
-        cv2.rectangle(img, pt1, pt2, color[clr], 2)
-        cv2.putText(img, name, (pt1[0], pt1[1] - 3), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color[clr])
-        cv2.circle(img, (x, y), 3, (0, 0, 0), -1)
+        # cv2.rectangle(img, pt1, pt2, color[clr], 2)
+        cv2.putText(img, name, (pt1[0], pt1[1] - 3), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color[clr], 1)
+        cv2.circle(img, (x, y), 3, color[clr], -1)
         return div
 
-    def setLabel(self, img, pts, label, move_point):
+    @staticmethod
+    def setLabel(img, pts, move_point):
         (x, y, w, h) = cv2.boundingRect(pts)
         pt1 = (x + move_point[0], y + move_point[1])
         pt2 = (x + w + move_point[0], y + h + move_point[1])
@@ -54,6 +57,32 @@ class Rectangle_Recognition:
         else:
             return 'None'
 
+    def cleared_setLabel(self, img, pts, move_point):
+        (x, y, w, h) = cv2.boundingRect(pts)
+        pt1 = (x + move_point[0], y + move_point[1])
+        pt2 = (x + move_point[0], y + h + move_point[1])
+
+        if 94 > h > 30 and 113 > w > 90:
+            if self.base_height == 0:
+                self.base_height = h
+            elif self.base_height - h < 0:
+                self.base_height = h
+            cv2.line(img, pt1, pt2, (0, 255, 255), 2)
+            cv2.putText(img, 'h :: {} safe'.format(self.base_height - h), (pt1[0] + 2, pt1[1] + 20), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.5,
+                        (0, 255, 255), 2)
+            return 'safe'
+
+        elif 30 > h > 0 and 113 > w > 90:
+            cv2.line(img, pt1, pt2, (0, 0, 255), 2)
+            cv2.putText(img, 'h :: {} danger'.format(self.base_height - h), (pt1[0] + 2, pt1[1] + 20), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.5,
+                        (0, 0, 255), 2)
+            return 'danger'
+
+        else:
+            return 'None'
+
     def detective(self, img, size, spot, clr):
         roi = self.roi("{} zone".format(clr), img, size[0], size[1], spot, clr)
         gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
@@ -72,8 +101,7 @@ class Rectangle_Recognition:
             vtc = len(approx)
 
             if vtc == 4:
-                state = self.setLabel(img, cont, "Rec", spot)
-                print('detective')
+                state = self.cleared_setLabel(img, cont, spot)
                 return adaptive_thr, state
         return adaptive_thr, 'None'
 
@@ -96,28 +124,34 @@ class Rectangle_Recognition:
         adaptive_thr1, state1 = self.detective(img, rec_size, spot1, clr1)
         if state1 != 'None':
             # cv2.imshow("threshold1", adaptive_thr1)
+            self.text = clr1 + ' zone ' + state1
             _, jpeg = cv2.imencode('.jpg', img)
-            return jpeg.tobytes(), state1
+            return jpeg.tobytes(), self.text
         else:
             adaptive_thr2, state2 = self.detective(img, rec_size, spot2, clr2)
             if state2 != 'None':
                 # cv2.imshow("threshold2", adaptive_thr1)
+                self.text = clr2 + ' zone ' + state2
                 _, jpeg = cv2.imencode('.jpg', img)
-                return jpeg.tobytes(), state2
+                return jpeg.tobytes(), self.text
             else:
                 adaptive_thr3, state3 = self.detective(img, rec_size, spot3, clr3)
                 if state3 != 'None':
                     # cv2.imshow("threshold3", adaptive_thr1)
+                    self.text = clr3 + ' zone ' + state3
                     _, jpeg = cv2.imencode('.jpg', img)
-                    return jpeg.tobytes(), state3
+                    return jpeg.tobytes(), self.text
                 else:
                     cv2.putText(img, 'Not Searching Object', (int(w / 2) - 100, int(h / 2)), cv2.FONT_HERSHEY_SIMPLEX,
                                 0.7, (0, 0, 255), thickness=2)
+                    self.text = 'Not Searching Object'
+                    _, jpeg = cv2.imencode('.jpg', img)
+                    return jpeg.tobytes(), self.text
 
         # cv2.imshow("result", img)
 
-        _, jpeg = cv2.imencode('.jpg', img)
-        return jpeg.tobytes()
+        # _, jpeg = cv2.imencode('.jpg', img)
+        # return jpeg.tobytes()
 
 
 if __name__ == '__main__':
