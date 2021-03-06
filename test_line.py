@@ -9,7 +9,12 @@ import numpy as np
 class Object_Recognition:
     def __init__(self):
 
-        self.cap = VideoStream('test2.mp4').start()
+        if __name__ == '__main__':
+            print('??')
+            self.cap = cv2.VideoCapture('test.mp4')
+        else:
+            self.cap = VideoStream('test.mp4').start()
+
         self.text = ''
         self.base_height = 0
 
@@ -24,32 +29,38 @@ class Object_Recognition:
         }
 
         # cap read 한 image 의 높이, 폭
-        self.img_w = 0
-        self.img_h = 0
 
         # roi init
-        self.spot = (110, 118)
+        self.spot = (180, 184)
+        self.endspot = (256, 500)
 
     def roi_(self, image: np.ndarray, name: str = '', clr: str = 'black',
-             is_draw: bool = False):
+             is_draw: bool = False, drow_image=None):
         """
+
         :param image: 원본 이미지 입력
         :param name: 영역의 이름을 지정
         :param clr: 색상 지정
         :param is_draw: roi 영역을 표시할지 설정
+        :param drow_image: drow 영역에 표시될 image
         :return: 분할 된 영역 이미지 출력
         """
 
         x, y = self.spot
-        div = image[y: y + self.img_h, x: x + self.img_w]
+        x2, y2 = self.endspot
+        div = image[y: y2, x: x2]
 
-        if is_draw:
+        if is_draw and drow_image is not None:
             pt1 = self.spot
-            pt2 = (x + self.img_w, y + self.img_h)
+            pt2 = self.endspot
 
-            cv2.rectangle(image, pt1, pt2, self.color[clr], 2)
-            cv2.putText(image, name, (pt1[0], pt1[1] - 3), cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.color[clr], 1)
-            cv2.circle(image, (x, y), 3, self.color[clr], -1)
+            cv2.rectangle(drow_image, pt1, pt2, self.color[clr], 2)
+            cv2.putText(drow_image, name, (pt1[0], pt1[1] - 3), cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.color[clr], 1)
+            # cv2.circle(drow_image, pt1, 3, self.color['black'], 3)
+            # cv2.circle(drow_image, self.endspot, 3, self.color['red'], 3)
+
+        elif drow_image:
+            print('drow_image is None')
 
         return div
 
@@ -74,16 +85,19 @@ class Object_Recognition:
         :param dimension: 1,2,3 차원 지원 / input = 1 | 2 | 3
         """
         if dimension == 1 or 2:
-            lines = cv2.HoughLinesP(diff_image, 0.8, np.pi / 180, 90, minLineLength=10, maxLineGap=100)
+            lines = cv2.HoughLinesP(diff_image, 1, np.pi / 180, 30, minLineLength=50, maxLineGap=10)
+            try:
+                for i in lines:
+                    x, y, w, h = i[0]
 
-            for i in lines:
-                x, y, w, h = i[0]
+                    if dimension == 1:
+                        cv2.circle(result_image, ((h - x) / 2, (h - y) / 2), 0.3, self.color['blue'], 1)
 
-                if dimension == 1:
-                    cv2.circle(result_image, ((h - x) / 2, (h - y) / 2), 0.3, self.color['blue'], 1)
-
-                elif dimension == 2:
-                    cv2.line(result_image, (x, y), (w, h), self.color['red'], 2)
+                    elif dimension == 2:
+                        cv2.line(result_image, (x, y), (w, h), self.color['red'], 5)
+            except TypeError as e:
+                print('line is None // ', e)
+                pass
 
         elif dimension == 3:
             cnt, _, stats, _ = cv2.connectedComponentsWithStats(diff_image)
@@ -100,24 +114,28 @@ class Object_Recognition:
             print('setLabel ::  dimension 값을 확인 하세요 / dimension :: %d' % dimension)
 
     def stream_(self):
-        image = self.cap.read()
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        if __name__ == '__main__':
+            _, image_result = self.cap.read()
+        else:
+            image_result = self.cap.read()
+        image = cv2.cvtColor(image_result, cv2.COLOR_BGR2GRAY)
+
         if self.base_image is None:
             self.base_image = image
             self.base_roi = self.roi_(self.base_image)
-            print('base : ', self.base_image.shape, ' image : ', image.shape)
+            # print('base : ', self.base_roi.shape, ' image : ', image.shape)
 
-        self.img_h, self.img_w = image.shape
-        compare_image = self.roi_(image)
-        print('base : ', self.base_roi.shape, ' image : ', image.shape)
+        compare_image = self.roi_(image, is_draw=True, drow_image=image_result)
+        # print('base : ', self.base_roi.shape, ' image : ', image.shape)
 
         diff = self.detective_(self.base_roi, compare_image)
 
         self.setLabel_(image, diff)
 
         if __name__ == '__main__':
-            cv2.imshow('result', image)
-            cv2.imshow('diff', diff)
+            cv2.imshow('result', image_result)
+            if diff is not None:
+                cv2.imshow('diff', diff)
 
         else:
             self.text = 'complete'

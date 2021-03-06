@@ -45,7 +45,7 @@ def setLabel(array, img, pts, label, move_point=None):
                         (0, 0, 255))
 
 
-cap = cv2.VideoCapture('rtsp://10.0.0.97:554/main&media=video&media=audio')
+cap = cv2.VideoCapture('test.mp4')
 
 none_array = []
 else_array = []

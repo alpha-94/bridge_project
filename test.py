@@ -78,12 +78,12 @@ cv.namedWindow('img_result')
 cv.createTrackbar('threshold', 'img_result', 0, 255, nothing)
 cv.setTrackbarPos('threshold', 'img_result', 30)
 
-cap = cv.VideoCapture('rtsp://10.0.0.97:554/main&media=video&media=audio')
+cap = cv.VideoCapture('test.mp4')
 
 while True:
     # img_color = cv.imread('2.jpg')
     ret, img_color = cap.read()
-    img_color = cv.resize(img_color, dsize=(640, 480), interpolation=cv.INTER_AREA)
+    # img_color = cv.resize(img_color, dsize=(640, 480), interpolation=cv.INTER_AREA)
     height, width = img_color.shape[:2]
 
     # 원본 영상을 HSV 영상으로 변환합니다.
